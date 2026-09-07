@@ -1,0 +1,6 @@
+{
+  "name": "Banner Ad Generator & A/B Studio",
+  "description": "Generate high-quality banner ads in all standard sizes with AI image generation, template customization, automated A/B testing, and data-driven performance analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
