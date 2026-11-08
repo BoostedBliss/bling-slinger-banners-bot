@@ -213,6 +213,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
+                aria-label="Close notifications"
                 className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800"
               >
                 <X className="w-3.5 h-3.5" />

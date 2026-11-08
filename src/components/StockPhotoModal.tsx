@@ -132,6 +132,7 @@ export const StockPhotoModal: React.FC<StockPhotoModalProps> = ({
           <button
             id="stock-photo-modal-close-btn"
             onClick={onClose}
+            aria-label="Close"
             className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           >
             <X className="w-5 h-5" />
