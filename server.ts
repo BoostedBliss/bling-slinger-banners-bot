@@ -143,9 +143,10 @@ Format your output strictly as a JSON object with this exact structure:
     return res.json({ success: true, data });
   } catch (error: any) {
     console.error("Error generating copy:", error);
+    // SECURITY: Do not expose internal error.message to the client
     return res.status(500).json({
       success: false,
-      error: error.message || "Failed to generate copy",
+      error: "Failed to generate copy",
     });
   }
 });
@@ -274,9 +275,10 @@ Return strictly a JSON object with this exact schema:
     return res.json({ success: true, data });
   } catch (error: any) {
     console.error("Error analyzing competitor:", error);
+    // SECURITY: Do not expose internal error.message to the client
     return res.status(500).json({
       success: false,
-      error: error.message || "Failed to analyze competitor layout",
+      error: "Failed to analyze competitor layout",
     });
   }
 });
@@ -413,9 +415,10 @@ Return strictly a JSON object matching this schema:
     return res.json({ success: true, data });
   } catch (error: any) {
     console.error("Error generating brand kit:", error);
+    // SECURITY: Do not expose internal error.message to the client
     return res.status(500).json({
       success: false,
-      error: error.message || "Failed to generate brand kit",
+      error: "Failed to generate brand kit",
     });
   }
 });
@@ -436,9 +439,10 @@ app.get("/api/stock-photos", async (req, res) => {
     });
   } catch (error: any) {
     console.error("Error fetching stock photos:", error);
+    // SECURITY: Do not expose internal error.message to the client
     return res.status(500).json({
       success: false,
-      error: error.message || "Failed to search stock photos",
+      error: "Failed to search stock photos",
     });
   }
 });
@@ -566,12 +570,13 @@ Preset: ${stylePreset}. Ultra-high resolution advertising photography, crisp com
         aspectRatio: targetAspectRatio,
         imageSize: targetSize,
         artisticStyle,
-        warning: modelError.message,
+        warning: "Gemini image generation warning, providing curated visual fallback.",
       });
     }
   } catch (error: any) {
     console.error("Error in generate-image endpoint:", error);
-    return res.status(500).json({ error: error.message || "Image generation failed" });
+    // SECURITY: Do not expose internal error.message to the client
+    return res.status(500).json({ error: "Image generation failed" });
   }
 });
 
