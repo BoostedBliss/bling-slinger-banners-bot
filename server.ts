@@ -10,6 +10,17 @@ dotenv.config();
 const app = express();
 const PORT = 3000;
 
+// SECURITY: Disable X-Powered-By header to prevent stack fingerprinting
+app.disable("x-powered-by");
+
+// SECURITY: Add essential security headers
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  next();
+});
+
 app.use(express.json({ limit: "25mb" }));
 
 // Lazy initialization of Gemini client
