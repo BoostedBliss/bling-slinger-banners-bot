@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { BannerDimension, STANDARD_BANNER_SIZES, AdVariant } from "../types";
 import { BannerRenderer } from "./BannerRenderer";
 import {
@@ -28,10 +28,13 @@ export const BannerSizesGrid: React.FC<BannerSizesGridProps> = ({
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [zoomLevel, setZoomLevel] = useState<number>(1);
 
-  const filteredSizes = STANDARD_BANNER_SIZES.filter((size) => {
-    if (filterCategory === "all") return true;
-    return size.category === filterCategory;
-  });
+  // Memoize filtered sizes to prevent unnecessary recalculations on zoom
+  const filteredSizes = useMemo(() => {
+    return STANDARD_BANNER_SIZES.filter((size) => {
+      if (filterCategory === "all") return true;
+      return size.category === filterCategory;
+    });
+  }, [filterCategory]);
 
   const getScaleForDisplay = (size: BannerDimension) => {
     // Determine appropriate optical display scale
