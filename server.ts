@@ -10,6 +10,50 @@ dotenv.config();
 const app = express();
 const PORT = 3000;
 
+app.disable("x-powered-by");
+
+// Simple in-memory rate limiting for API endpoints
+const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const MAX_REQUESTS = 100; // max requests per minute
+
+// Cleanup interval to prevent memory leaks
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, data] of rateLimitMap.entries()) {
+    if (now - data.lastReset > RATE_LIMIT_WINDOW) {
+      rateLimitMap.delete(ip);
+    }
+  }
+}, RATE_LIMIT_WINDOW * 2);
+
+app.use((req, res, next) => {
+  // Security Headers
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+
+  // Rate Limiting for API routes
+  if (req.path.startsWith("/api/")) {
+    const ip = req.ip || req.socket.remoteAddress || "unknown";
+    const now = Date.now();
+    let limitData = rateLimitMap.get(ip);
+
+    if (!limitData || now - limitData.lastReset > RATE_LIMIT_WINDOW) {
+      limitData = { count: 0, lastReset: now };
+    }
+
+    limitData.count++;
+    rateLimitMap.set(ip, limitData);
+
+    if (limitData.count > MAX_REQUESTS) {
+      return res.status(429).json({ error: "Too many requests, please try again later." });
+    }
+  }
+
+  next();
+});
+
 app.use(express.json({ limit: "25mb" }));
 
 // Lazy initialization of Gemini client
